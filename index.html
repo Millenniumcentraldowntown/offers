@@ -126,7 +126,7 @@
     /* =========================================================
        HERO IMAGE
        It scrolls normally and is NOT sticky.
-       To replace it, add assets/hero.jpg
+       To replace it, add hero.jpg to asset/ or assets/
        ========================================================= */
     .hero-wrap{
       padding:0 17px;
@@ -522,7 +522,7 @@
   <section class="hero-wrap">
     <div class="hero">
       <img
-        src="assets/hero.jpg"
+        id="heroImage"
         alt="Millennium Central Downtown"
       >
     </div>
@@ -632,10 +632,10 @@
   /*
     IMAGE SYSTEM
     ------------
-    Each item has an explicit image filename in the MENU data:
-      assets/offer 1.jpg through assets/offer 6.jpg
-
-    If an image does not exist, the shared local placeholder is shown automatically.
+    Keep the offer filenames in the MENU data below. Images can be uploaded
+    directly into either "assets" or "asset" beside this HTML file.
+    The loader also checks common naming differences (offer 1 / offer1),
+    JPG/JPEG/PNG/WEBP and previous "menu" subfolders for compatibility.
   */
 
   const MENU = [
@@ -788,8 +788,48 @@
     }[m]));
   }
 
-  function itemImage(item){
-    return `assets/${item.image}`;
+  // Resolve image files against common folders and filenames.
+  // This avoids broken images when the folder is named "asset" instead of
+  // "assets", or the uploaded image is named "offer1.jpg" vs "offer 1.jpg".
+  function imageCandidates(filename){
+    const match = /^offer[\s_-]*(\d+)\.(jpe?g|png|webp)$/i.exec(filename);
+    const names = match
+      ? [`offer ${match[1]}`, `offer${match[1]}`, `offer-${match[1]}`, `offer_${match[1]}`]
+      : [filename.replace(/\.(jpe?g|png|webp)$/i, "")];
+    const suppliedExt = (filename.match(/\.([^.]+)$/) || [,"jpg"])[1].toLowerCase();
+    const exts = [...new Set([suppliedExt, "jpg", "jpeg", "png", "webp"])] ;
+    const dirs = ["assets", "asset", "assets/menu", "asset/menu"];
+    const paths = [];
+    for(const name of names){
+      for(const ext of exts){
+        for(const dir of dirs){
+          paths.push(`./${dir}/${encodeURIComponent(name + "." + ext)}`);
+        }
+      }
+    }
+    return paths;
+  }
+
+  // Always show a helpful placeholder even when placeholder.svg is not uploaded.
+  const EMBEDDED_IMAGE_PLACEHOLDER = "data:image/svg+xml;charset=UTF-8," +
+    encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><rect width="600" height="400" fill="#e7edf1"/><path d="M180 270l90-100 65 70 35-40 75 70" stroke="#a7b7c1" fill="none" stroke-width="13" stroke-linejoin="round"/><circle cx="210" cy="135" r="21" fill="#a7b7c1"/><text x="300" y="330" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" fill="#708695">Image not found</text></svg>');
+
+  function loadAssetImage(img, filename){
+    if(!img) return;
+    const paths = imageCandidates(filename);
+    paths.push("./assets/placeholder.svg", "./asset/placeholder.svg");
+    let position = 0;
+    const tryNext = () => {
+      if(position < paths.length){
+        img.src = paths[position++];
+      }else{
+        img.removeEventListener("error", tryNext);
+        img.src = EMBEDDED_IMAGE_PLACEHOLDER;
+        console.warn("Missing image:", filename, "— check the filename, extension and asset/assets folder next to this HTML file.");
+      }
+    };
+    img.addEventListener("error", tryNext);
+    tryNext();
   }
 
   function money(value){
@@ -818,6 +858,10 @@
 
     noResults.classList.toggle("show", totalVisible===0);
 
+    menuContent.querySelectorAll("img[data-image-file]").forEach(img=>{
+      loadAssetImage(img, img.dataset.imageFile);
+    });
+
     menuContent.querySelectorAll(".product-card").forEach(card=>{
       card.addEventListener("click",()=>openProduct(card.dataset.id));
       card.addEventListener("keydown",e=>{
@@ -836,10 +880,9 @@
       <article class="product-card" data-id="${item.id}" tabindex="0" role="button">
         <div class="product-image">
           <img
-            src="${itemImage(item)}"
+            data-image-file="${esc(item.image)}"
             alt="${esc(t.name)}"
             loading="lazy"
-            onerror="this.onerror=null;this.src='assets/placeholder.svg';"
           >
         </div>
 
@@ -876,9 +919,8 @@
     document.getElementById("detailBody").innerHTML = `
       <div class="detail-image">
         <img
-          src="${itemImage(item)}"
+          data-image-file="${esc(item.image)}"
           alt="${esc(t.name)}"
-          onerror="this.onerror=null;this.src='assets/placeholder.svg';"
         >
       </div>
 
@@ -896,6 +938,8 @@
       </div>
     `;
 
+    const detailImage = document.querySelector("#detailBody img[data-image-file]");
+    loadAssetImage(detailImage, item.image);
     openOverlay("detailOverlay");
   }
 
@@ -1014,6 +1058,7 @@
     if(stack) stickyResizeObserver.observe(stack);
   }
 
+  loadAssetImage(document.getElementById("heroImage"), "hero.jpg");
   setLanguage(currentLang);
   requestAnimationFrame(syncStickyStackHeight);
 </script>
