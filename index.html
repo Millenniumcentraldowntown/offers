@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Millennium Central Downtown | Digital Menu</title>
+
+  <style>
+    :root{
+       --teal:#559f9f;
+       --teal-dark:#2f7778;
+       --teal-soft:#eaf5f5;
+       --ink:#24445b;
+       --muted:#6f8493;
+       --bg:#eef1f4;
+       --white:#ffffff;
+       --line:#e8edf0;
+       --tab:#f6f7f8;
+       --shadow:0 8px 22px rgba(25,47,66,.09);
+       --radius:12px;
+       --header-h:60px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:auto;overflow-y:auto}
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      overflow-y:auto;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color:#ffffff;
+      background:var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -webkit-overflow-scrolling:touch;
+    }
+    body.modal-open{overflow:hidden}
+    button,input{font:inherit}
+    button{color:inherit}
+    img{display:block;max-width:100%}
+
+    .app{
+      width:min(100%, 520px);
+      min-height:100vh;
+      margin:0 auto;
+      background:var(--white);
+      overflow:visible;
+      box-shadow:0 0 50px rgba(0,0,0,.05);
+    }
+
+    /* =========================================================
+       TOP HEADER
+       This is always sticky.
+       ========================================================= */
+    .sticky-stack{
+      position:fixed;
+      top:0;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(100%, 520px);
+      z-index:999;
+      background:rgba(255,255,255,.99);
+      box-shadow:0 2px 10px rgba(25,47,66,.08);
+    }
+
+    .sticky-spacer{
+      height:var(--sticky-stack-height, 60px);
+    }
+
+    .topbar{
+      position:relative;
+      z-index:2;
+      min-height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:12px;
+      padding:9px 17px;
+      background:rgba(255,255,255,.98);
+      border-bottom:1px solid rgba(232,237,240,.9);
+      backdrop-filter:blur(12px);
+    }
+
+    .header-side{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .round-btn{
+      width:39px;
+      height:39px;
+      flex:0 0 39px;
+      display:grid;
+      place-items:center;
+      border:0;
+      border-radius:50%;
+      background:#d71920;
+      color:#ffffff;
+      cursor:pointer;
+      transition:transform .16s ease, background .16s ease;
+    }
+
+    .round-btn:hover{background:#b8141a}
+    .round-btn:focus-visible{outline:3px solid rgba(215,25,32,.20);outline-offset:2px;background:#c5161d}
+    .round-btn:active{transform:scale(.96);background:#931015}
+
+    .round-btn .translation-icon{
+      display:block;
+      width:29px;
+      height:29px;
+      object-fit:contain;
+    }
+
+    .round-btn .phone-icon{
+      width:20px;
+      height:20px;
+      fill:none;
+      stroke:currentColor;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    /* =========================================================
+       HERO IMAGE
+       It scrolls normally and is NOT sticky.
+       To replace it, add assets/hero.jpg
+       ========================================================= */
+    .hero-wrap{
+      padding:0 17px;
+      background:#fff;
+    }
+    .hero{
+      position:relative;
+      overflow:hidden;
+      width:100%;
+      aspect-ratio:1.55 / 1;
+      border-radius:14px;
+      background:linear-gradient(135deg,#dce8e8,#b9cece);
+    }
+    .hero img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .menu-content{
+      padding:0 17px 32px;
+      overflow:visible;
+    }
+
+    .menu-section{
+      padding-top:42px;
+      scroll-margin-top:calc(var(--sticky-stack-height, 60px) + 12px);
+    }
+
+    .section-title{
+      margin:0 0 18px;
+      font-size:1.18rem;
+      line-height:1.2;
+      font-weight:800;
+      letter-spacing:-.01em;
+      color:var(--ink);
+    }
+
+    .product-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px 18px;
+    }
+
+    .product-card{
+      min-width:0;
+      overflow:hidden;
+      border-radius:7px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      border:1px solid rgba(232,237,240,.8);
+      transition:transform .16s ease, box-shadow .16s ease;
+    }
+    .product-card:active{transform:scale(.992)}
+
+    .product-image{
+      position:relative;
+      aspect-ratio:1.17 / 1;
+      overflow:hidden;
+      background:#dfe7e8;
+    }
+    .product-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .product-body{
+      padding:12px 11px 13px;
+    }
+
+    .product-name{
+      margin:0;
+      font-size:.93rem;
+      line-height:1.28;
+      font-weight:500;
+      color:var(--ink);
+      display:block;
+      width:100%;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .dietary{
+      min-height:0;
+      margin:2px 0 0;
+      color:#8ea0ad;
+      font-size:.71rem;
+      line-height:1.25;
+      font-style:italic;
+    }
+
+    .product-desc{
+      margin:5px 0 0;
+      min-height:0;
+      color:#617d91;
+      font-size:.78rem;
+      line-height:1.45;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .price-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:5px;
+    }
+
+    .price{
+      font-size:.82rem;
+      font-weight:750;
+      color:var(--ink);
+    }
+
+
+    .old-price{
+      color:#a0abb2;
+      font-size:.76rem;
+      text-decoration:line-through;
+    }
+
+    .custom-badge{
+      display:inline-flex;
+      margin-top:8px;
+      padding:4px 7px;
+      border-radius:999px;
+      background:var(--teal-soft);
+      color:var(--teal-dark);
+      font-size:.64rem;
+      font-weight:800;
+    }
+
+    .no-results{
+      display:none;
+      padding:40px 20px 90px;
+      text-align:center;
+      color:var(--muted);
+    }
+    .no-results.show{display:block}
+
+/* =========================================================
+       BOTTOM SHEETS
+       ========================================================= */
+    .overlay{
+      position:fixed;
+      inset:0;
+      z-index:120;
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      background:rgba(18,34,47,.46);
+    }
+    .overlay.open{display:flex}
+
+    .sheet{
+      width:min(100%,520px);
+      max-height:88vh;
+      overflow-y:auto;
+      background:#fff;
+      border-radius:22px 22px 0 0;
+      box-shadow:0 -18px 50px rgba(0,0,0,.22);
+      padding-bottom:max(16px,env(safe-area-inset-bottom));
+      overscroll-behavior:contain;
+    }
+
+    .sheet-handle{
+      width:42px;
+      height:4px;
+      margin:9px auto 3px;
+      border-radius:999px;
+      background:#d7dde0;
+    }
+
+    .sheet-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 16px 12px;
+      border-bottom:1px solid var(--line);
+    }
+    .sheet-head h2{
+      margin:0;
+      font-size:1.05rem;
+    }
+    .close-btn svg{stroke:#111111;}
+
+    .close-btn{
+       width:34px;
+       height:34px;
+       padding:0;
+       border:0;
+       outline:none;
+       box-shadow:none;
+       appearance:none;
+       -webkit-appearance:none;
+       border-radius:50%;
+       background:#f1f4f5;
+       color:#111111;
+       font-size:1.15rem;
+       line-height:1;
+       cursor:pointer;
+       display:grid;
+       place-items:center;
+    }
+    .close-btn:focus,
+    .close-btn:focus-visible{
+       outline:none;
+       box-shadow:none;
+    }
+
+    .language-list{
+      display:grid;
+      gap:8px;
+      padding:14px;
+    }
+
+    .language-option{
+       width:100%;
+       display:flex;
+       align-items:center;
+       justify-content:space-between;
+       gap:12px;
+       border:1px solid #e8edf0;
+       border-radius:11px;
+       background:#ffffff;
+       padding:13px 14px;
+       text-align:start;
+       cursor:pointer;
+    }
+
+    .language-option{color:#24445b;}
+
+    .language-option.active{
+       border-color:#d71920;
+       background:#fff0f0;
+       color:#24445b;
+     }
+
+    .language-option span:first-child{
+      font-weight:700;
+    }
+
+    .check{
+       color:#d71920;
+       font-weight:900;
+    }
+
+    .detail-image{
+      width:100%;
+      aspect-ratio:1.4 / 1;
+      overflow:hidden;
+      background:#dfe7e8;
+    }
+    .detail-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .detail-content{
+      padding:16px;
+    }
+    .detail-category{
+      color:#d71920;
+      font-size:.70rem;
+      font-weight:850;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+    .detail-content h2{
+      margin:6px 0;
+      font-size:1.3rem;
+      line-height:1.2;
+    }
+    .detail-price{
+      font-size:.95rem;
+      font-weight:850;
+    }
+    .detail-desc{
+      margin:12px 0 0;
+      color:#657f91;
+      font-size:.88rem;
+      line-height:1.55;
+    }
+    /* Offer validity, timings and venue: displayed only in product popups. */
+    .offer-details{
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:.86rem;
+      line-height:1.5;
+    }
+    .offer-detail-row{
+      display:flex;
+      align-items:baseline;
+      flex-wrap:wrap;
+      gap:5px;
+    }
+    .offer-detail-row strong{
+      color:var(--ink);
+      font-weight:750;
+    }
+
+    .modifier{
+      margin-top:15px;
+      padding-top:13px;
+      border-top:1px solid var(--line);
+    }
+    .modifier h3{
+      margin:0 0 5px;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+    .modifier p{
+      margin:0;
+      color:#6d8290;
+      font-size:.85rem;
+      line-height:1.5;
+    }
+
+/* Product popup text theme adjustment */
+    .sheet,
+    .sheet h2,
+    .detail-content h2,
+    .detail-price,
+    .modifier h3,
+    .sheet-head h2{
+      color:var(--ink);
+    }
+
+    .detail-desc{
+      color:var(--muted);
+    }
+
+    .modifier p{
+      color:var(--muted);
+    }
+
+    @media (min-width:680px){
+      body{padding:18px 0}
+      .app{border-radius:22px}
+      .sticky-stack{
+        top:0;
+        border-radius:0 0 16px 16px;
+      }
+      .product-grid{gap:20px}
+      .overlay{align-items:flex-end;padding:0}
+      .sheet{border-radius:22px 22px 0 0}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        scroll-behavior:auto!important;
+        transition:none!important;
+      }
+    }
+
+</style>
+</head>
+
+<body>
+<main class="app">
+
+  <div class="sticky-stack">
+    <header class="topbar">
+      <div class="header-side">
+        <a class="round-btn" href="tel:+971551089953" aria-label="Call +971 55 108 9953" title="Call +971 55 108 9953">
+          <svg class="phone-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.19 18a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.09 3.18 2 2 0 0 1 4.08 1h3a2 2 0 0 1 2 1.72c.13.97.37 1.93.72 2.85a2 2 0 0 1-.45 2.11L8.08 8.91a16 16 0 0 0 6 6l1.23-1.27a2 2 0 0 1 2.11-.45c.92.35 1.88.59 2.85.72A2 2 0 0 1 22 16.92Z"/>
+          </svg>
+        </a>
+        <button class="round-btn" id="languageBtn" aria-label="Choose language" title="Choose language">
+          <img class="translation-icon" src="data:image/png;base64,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" alt="" aria-hidden="true">
+        </button>
+
+      </div>
+    </header>
+
+  </div>
+
+  <div class="sticky-spacer" aria-hidden="true"></div>
+
+  <section class="hero-wrap">
+    <div class="hero">
+      <img
+        src="assets/hero.jpg"
+        alt="Millennium Central Downtown"
+      >
+    </div>
+  </section>
+
+  <div class="menu-content" id="menuContent"></div>
+  <div class="no-results" id="noResults">No menu items found.</div>
+
+</main>
+
+<!-- Language -->
+<div class="overlay" id="languageOverlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <h2 data-ui="chooseLanguage">Choose language</h2>
+      <button class="close-btn" data-close="languageOverlay" aria-label="Close">×</button>
+    </div>
+    <div class="language-list">
+      <button class="language-option active" data-lang="en">
+        <span>English</span><span class="check">✓</span>
+      </button>
+      <button class="language-option" data-lang="ar">
+        <span>العربية</span><span class="check"></span>
+      </button>
+      <button class="language-option" data-lang="ru">
+        <span>Русский</span><span class="check"></span>
+      </button>
+      <button class="language-option" data-lang="zh">
+        <span>中文（简体）</span><span class="check"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Product details -->
+<div class="overlay" id="detailOverlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <h2 data-ui="itemDetails">Item details</h2>
+      <button class="close-btn" data-close="detailOverlay" aria-label="Close">×</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+
+<script>
+  const UI = {
+    en:{
+      chooseLanguage:"Choose Language",
+      itemDetails:"Item Details",
+      noResults:"No Menu Items Found.",
+      custom:"Customize"
+    },
+    ar:{
+      chooseLanguage:"اختر اللغة",
+      itemDetails:"تفاصيل الصنف",
+      noResults:"لم يتم العثور على أصناف.",
+      custom:"تخصيص"
+    },
+    ru:{
+      chooseLanguage:"Выберите язык",
+      itemDetails:"Подробности предложения",
+      noResults:"Предложения не найдены.",
+      custom:"Настроить"
+    },
+    zh:{
+      chooseLanguage:"选择语言",
+      itemDetails:"优惠详情",
+      noResults:"未找到优惠项目。",
+      custom:"自定义"
+    }
+  };
+
+  // The following information applies to all six promotions and appears
+  // in each item's detail popup only (never on the menu cards).
+  const OFFER_DETAILS = {
+    en: {
+      validityLabel: "Validity", validity: "1st – 30th November 2026",
+      timeLabel: "Timings", time: "10:00 AM – 8:00 PM | Daily",
+      locationLabel: "Location", location: "The Infinite Pool | Level M3"
+    },
+    ar: {
+      validityLabel: "الصلاحية", validity: "1 – 30 نوفمبر 2026",
+      timeLabel: "المواعيد", time: "10:00 صباحًا – 8:00 مساءً | يوميًا",
+      locationLabel: "الموقع", location: "ذا إنفينيت بول | الطابق M3"
+    },
+    ru: {
+      validityLabel: "Срок действия", validity: "1–30 ноября 2026 года",
+      timeLabel: "Часы работы", time: "10:00–20:00 | Ежедневно",
+      locationLabel: "Место", location: "The Infinite Pool | уровень M3"
+    },
+    zh: {
+      validityLabel: "有效期", validity: "2026年11月1日至30日",
+      timeLabel: "营业时间", time: "上午10:00至晚上8:00 | 每日",
+      locationLabel: "地点", location: "The Infinite Pool | M3层"
+    }
+  };
+
+  const CAT = {
+    "alcoholic-promotion":{en:"Alcoholic Promotion", ar:"Alcoholic Promotion", ru:"Алкогольные акции", zh:"酒精饮品优惠"},
+    "non-alcoholic-promotions":{en:"Non Alcoholic Promotions", ar:"Non Alcoholic Promotions", ru:"Безалкогольные акции", zh:"无酒精饮品优惠"}
+  };
+
+  /*
+    IMAGE SYSTEM
+    ------------
+    Each item has an explicit image filename in the MENU data:
+      assets/offer 1.jpg through assets/offer 6.jpg
+
+    If an image does not exist, the shared local placeholder is shown automatically.
+  */
+
+  const MENU = [
+  {
+    "id": "offer-1",
+    "image": "offer 1.jpg",
+    "cat": "alcoholic-promotion",
+    "price": "250.00",
+    "en": {
+      "name": "Beer Bucket & Wings",
+      "desc": "Spice up your evening with the ultimate combo. 5 chilled beers and a plate of spicy chicken wings!"
+    },
+    "ar": {
+      "name": "دلو البيرة وأجنحة الدجاج",
+      "desc": "أضف نكهة مميزة إلى أمسيتك مع هذا العرض المتكامل: 5 زجاجات بيرة باردة وطبق من أجنحة الدجاج الحارة!"
+    },
+    "ru": {
+      "name": "Ведёрко пива и куриные крылышки",
+      "desc": "Добавьте остроты вашему вечеру с идеальным сочетанием: 5 бутылок охлаждённого пива и порция острых куриных крылышек!"
+    },
+    "zh": {
+      "name": "冰镇啤酒桶配香辣鸡翅",
+      "desc": "为夜晚增添火辣滋味！畅享5瓶冰镇啤酒，搭配一盘香辣鸡翅，组成绝佳美味组合！"
+    }
+  },
+  {
+    "id": "offer-2",
+    "image": "offer 2.jpg",
+    "cat": "alcoholic-promotion",
+    "price": "199.00",
+    "en": {
+      "name": "Unlimited Sausages & Beer Bucket",
+      "desc": "Enjoy unlimited sausages with 5 chilled bottles of beer perfect for a relaxed meal with friends."
+    },
+    "ar": {
+      "name": "نقانق غير محدودة ودلو بيرة",
+      "desc": "استمتع بكمية غير محدودة من النقانق مع 5 زجاجات بيرة باردة، في وجبة مثالية للاسترخاء برفقة الأصدقاء."
+    },
+    "ru": {
+      "name": "Сосиски без ограничений и ведёрко пива",
+      "desc": "Наслаждайтесь неограниченным количеством сосисок и 5 бутылками охлаждённого пива — идеальный вариант для непринуждённой встречи с друзьями."
+    },
+    "zh": {
+      "name": "无限量香肠配啤酒桶",
+      "desc": "尽享无限量香肠及5瓶冰镇啤酒，与朋友轻松聚餐的理想之选。"
+    }
+  },
+  {
+    "id": "offer-3",
+    "image": "offer 3.jpg",
+    "cat": "alcoholic-promotion",
+    "price": "119.00",
+    "en": {
+      "name": "Pasta & Wine Nights",
+      "desc": "Classic Penne Alfredo, perfectly paired with two glasses of house wine."
+    },
+    "ar": {
+      "name": "ليالي الباستا والنبيذ",
+      "desc": "باستا بينّي ألفريدو الكلاسيكية، تُقدَّم مع كأسين من نبيذ المطعم لتجربة متكاملة."
+    },
+    "ru": {
+      "name": "Вечера пасты и вина",
+      "desc": "Классическая паста пенне альфредо в идеальном сочетании с двумя бокалами домашнего вина."
+    },
+    "zh": {
+      "name": "意面与葡萄酒之夜",
+      "desc": "经典阿尔弗雷多奶油斜管意面，搭配两杯店选葡萄酒，风味相得益彰。"
+    }
+  },
+  {
+    "id": "offer-4",
+    "image": "offer 4.jpg",
+    "cat": "non-alcoholic-promotions",
+    "price": "50.00",
+    "en": {
+      "name": "Express Business Lunch",
+      "desc": "Business lunch made simple. Starter, main course, and a drink to keep you going."
+    },
+    "ar": {
+      "name": "غداء عمل سريع",
+      "desc": "غداء عمل بكل بساطة. مقبلات وطبق رئيسي ومشروب يمنحك النشاط لمواصلة يومك."
+    },
+    "ru": {
+      "name": "Быстрый бизнес-ланч",
+      "desc": "Бизнес-ланч без лишних хлопот: закуска, основное блюдо и напиток, чтобы зарядиться энергией на весь день."
+    },
+    "zh": {
+      "name": "快捷商务午餐",
+      "desc": "商务午餐，简单又省心。包含前菜、主菜及一杯饮品，为接下来的工作补充能量。"
+    }
+  },
+  {
+    "id": "offer-5",
+    "image": "offer 5.jpg",
+    "cat": "non-alcoholic-promotions",
+    "price": "69.00",
+    "en": {
+      "name": "Dinner Buffet",
+      "desc": "Enjoy a delicious dinner buffet featuring a selection of starters, refreshing juices, hearty main courses, and tempting desserts."
+    },
+    "ar": {
+      "name": "بوفيه العشاء",
+      "desc": "استمتع ببوفيه عشاء شهي يضم تشكيلة من المقبلات والعصائر المنعشة والأطباق الرئيسية الغنية والحلويات الشهية."
+    },
+    "ru": {
+      "name": "Шведский стол на ужин",
+      "desc": "Насладитесь вкусным ужином в формате шведского стола с выбором закусок, освежающих соков, сытных основных блюд и аппетитных десертов."
+    },
+    "zh": {
+      "name": "自助晚餐",
+      "desc": "尽情享用丰盛的自助晚餐，包括精选前菜、清爽果汁、丰盛主菜及诱人甜点。"
+    }
+  },
+  {
+    "id": "offer-6",
+    "image": "offer 6.jpg",
+    "cat": "non-alcoholic-promotions",
+    "price": "99.00",
+    "en": {
+      "name": "Chef’s Table Experience",
+      "desc": "An Evening at the Chef’s Table. Experience three carefully crafted courses, showcasing the chef’s selection of flavours and culinary creativity."
+    },
+    "ar": {
+      "name": "تجربة مائدة الشيف",
+      "desc": "أمسية على مائدة الشيف. استمتع بثلاثة أطباق أُعدّت بعناية، تعكس نكهات الشيف المختارة وإبداعه في فن الطهي."
+    },
+    "ru": {
+      "name": "Гастрономический вечер за столом шеф-повара",
+      "desc": "Вечер за столом шеф-повара. Откройте для себя три тщательно продуманных блюда, раскрывающих авторское сочетание вкусов и кулинарное мастерство шеф-повара."
+    },
+    "zh": {
+      "name": "主厨餐桌体验",
+      "desc": "主厨餐桌之夜。品尝精心打造的三道式佳肴，领略主厨甄选的风味与独特烹饪创意。"
+    }
+  }
+];
+
+  const categoryOrder = ["alcoholic-promotion", "non-alcoholic-promotions"];
+
+  let currentLang = localStorage.getItem("kow-menu-lang") || "en";
+  if(!["en","ar","ru","zh"].includes(currentLang)) currentLang = "en";
+
+  const menuContent = document.getElementById("menuContent");
+  const noResults = document.getElementById("noResults");
+
+  function esc(v=""){
+    return String(v).replace(/[&<>"']/g,m=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",
+      "\"":"&quot;","'":"&#039;"
+    }[m]));
+  }
+
+  function itemImage(item){
+    return `assets/${item.image}`;
+  }
+
+  function money(value){
+    const formatted = String(value).split("|").map(v=>`AED ${v.trim()}`).join(" | ");
+    return formatted;
+  }
+
+  function renderMenu(){
+    let totalVisible = 0;
+
+    menuContent.innerHTML = categoryOrder.map(cat=>{
+      const items = MENU.filter(item=>item.cat===cat);
+
+      if(!items.length) return "";
+      totalVisible += items.length;
+
+      return `
+        <section class="menu-section" id="section-${cat}" data-section-cat="${cat}">
+          <h2 class="section-title">${esc(CAT[cat][currentLang])}</h2>
+          <div class="product-grid">
+            ${items.map(productCard).join("")}
+          </div>
+        </section>
+      `;
+    }).join("");
+
+    noResults.classList.toggle("show", totalVisible===0);
+
+    menuContent.querySelectorAll(".product-card").forEach(card=>{
+      card.addEventListener("click",()=>openProduct(card.dataset.id));
+      card.addEventListener("keydown",e=>{
+        if(e.key==="Enter" || e.key===" "){
+          e.preventDefault();
+          openProduct(card.dataset.id);
+        }
+      });
+    });
+
+  }
+
+  function productCard(item){
+    const t = item[currentLang];
+    return `
+      <article class="product-card" data-id="${item.id}" tabindex="0" role="button">
+        <div class="product-image">
+          <img
+            src="${itemImage(item)}"
+            alt="${esc(t.name)}"
+            loading="lazy"
+            onerror="this.onerror=null;this.src='assets/placeholder.svg';"
+          >
+        </div>
+
+        <div class="product-body">
+          <h3 class="product-name">${esc(t.name)}</h3>
+          <p class="dietary">${item.dietary ? esc(typeof item.dietary === "object" ? (item.dietary[currentLang] || "") : item.dietary) : ""}</p>
+          ${t.desc ? `<p class="product-desc">${esc(t.desc)}</p>` : `<p class="product-desc">&nbsp;</p>`}
+          ${item.badge ? `<span class="custom-badge">${esc(UI[currentLang].custom)}</span>` : ""}
+          <div class="price-row">
+            <span class="price">${money(item.price)}</span>
+            ${item.oldPrice ? `<span class="old-price">${money(item.oldPrice)}</span>` : ""}
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function openProduct(id){
+    const item = MENU.find(x=>x.id===id);
+    if(!item) return;
+
+    const t = item[currentLang];
+    const details = OFFER_DETAILS[currentLang];
+
+    const modifiers = item.modifiers
+      ? item.modifiers[currentLang].map(m=>`
+          <div class="modifier">
+            <h3>${esc(m[0])}</h3>
+            <p>${esc(m[1])}</p>
+          </div>
+        `).join("")
+      : "";
+
+    document.getElementById("detailBody").innerHTML = `
+      <div class="detail-image">
+        <img
+          src="${itemImage(item)}"
+          alt="${esc(t.name)}"
+          onerror="this.onerror=null;this.src='assets/placeholder.svg';"
+        >
+      </div>
+
+      <div class="detail-content">
+        <div class="detail-category">${esc(CAT[item.cat][currentLang])}</div>
+        <h2>${esc(t.name)}</h2>
+        <div class="detail-price">${money(item.price)}</div>
+        ${t.desc ? `<p class="detail-desc">${esc(t.desc)}</p>` : ""}
+        ${modifiers}
+        <div class="offer-details" aria-label="Offer details">
+          <div class="offer-detail-row"><strong>${esc(details.validityLabel)}:</strong> <span>${esc(details.validity)}</span></div>
+          <div class="offer-detail-row"><strong>${esc(details.timeLabel)}:</strong> <span>${esc(details.time)}</span></div>
+          <div class="offer-detail-row"><strong>${esc(details.locationLabel)}:</strong> <span>${esc(details.location)}</span></div>
+        </div>
+      </div>
+    `;
+
+    openOverlay("detailOverlay");
+  }
+
+  function setLanguage(lang){
+    currentLang = lang;
+    localStorage.setItem("kow-menu-lang",lang);
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang==="ar" ? "rtl" : "ltr";
+
+    document.querySelectorAll("[data-ui]").forEach(el=>{
+      const key = el.dataset.ui;
+      if(UI[lang][key]) el.textContent = UI[lang][key];
+    });
+    noResults.textContent = UI[lang].noResults;
+
+    document.querySelectorAll(".language-option").forEach(btn=>{
+      const active = btn.dataset.lang===lang;
+      btn.classList.toggle("active",active);
+      btn.querySelector(".check").textContent = active ? "✓" : "";
+    });
+
+    renderMenu();
+    closeOverlay("languageOverlay");
+  }
+
+  function closeAllOverlays(exceptId=null){
+    document.querySelectorAll(".overlay.open").forEach(overlay=>{
+      if(overlay.id !== exceptId){
+        overlay.classList.remove("open");
+      }
+    });
+
+    if(!document.querySelector(".overlay.open")){
+      document.body.classList.remove("modal-open");
+    }
+  }
+
+  function openOverlay(id){
+    const target = document.getElementById(id);
+    if(!target) return;
+
+    // Only one bottom popup can be open at a time.
+    closeAllOverlays(id);
+    target.classList.add("open");
+    document.body.classList.add("modal-open");
+  }
+
+  function toggleOverlay(id){
+    const target = document.getElementById(id);
+    if(!target) return;
+
+    if(target.classList.contains("open")){
+      target.classList.remove("open");
+
+      if(!document.querySelector(".overlay.open")){
+        document.body.classList.remove("modal-open");
+      }
+      return;
+    }
+
+    // Opening a different popup automatically closes the current one.
+    closeAllOverlays();
+    target.classList.add("open");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeOverlay(id){
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("open");
+
+    if(!document.querySelector(".overlay.open")){
+      document.body.classList.remove("modal-open");
+    }
+  }
+
+
+  document.getElementById("languageBtn").addEventListener("click",()=>toggleOverlay("languageOverlay"));
+
+  document.querySelectorAll(".language-option").forEach(btn=>{
+    btn.addEventListener("click",()=>setLanguage(btn.dataset.lang));
+  });
+
+  document.querySelectorAll("[data-close]").forEach(btn=>{
+    btn.addEventListener("click",()=>closeOverlay(btn.dataset.close));
+  });
+
+  document.querySelectorAll(".overlay").forEach(overlay=>{
+    overlay.addEventListener("click",e=>{
+      if(e.target===overlay) closeOverlay(overlay.id);
+    });
+  });
+
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      document.querySelectorAll(".overlay.open").forEach(o=>closeOverlay(o.id));
+    }
+  });
+
+
+  function syncStickyStackHeight(){
+    const stack = document.querySelector(".sticky-stack");
+    if(!stack) return;
+
+    const height = Math.ceil(stack.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--sticky-stack-height", height + "px");
+  }
+
+  // Keep the reserved space exactly equal to the fixed language header.
+  syncStickyStackHeight();
+  window.addEventListener("resize", syncStickyStackHeight);
+
+  if("ResizeObserver" in window){
+    const stickyResizeObserver = new ResizeObserver(syncStickyStackHeight);
+    const stack = document.querySelector(".sticky-stack");
+    if(stack) stickyResizeObserver.observe(stack);
+  }
+
+  setLanguage(currentLang);
+  requestAnimationFrame(syncStickyStackHeight);
+</script>
+</body>
+</html>
