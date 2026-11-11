@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
-  <title>Millennium Central Downtown | Promotions</title>
+  <title>Millennium Central Downtown | Digital Promotions</title>
 
   <style>
     :root{
@@ -146,12 +146,12 @@
       object-fit:cover;
     }
 
-    .menu-content{
+    .promotions-content{
       padding:0 17px 32px;
       overflow:visible;
     }
 
-    .menu-section{
+    .promotions-section{
       padding-top:42px;
       scroll-margin-top:calc(var(--sticky-stack-height, 60px) + 12px);
     }
@@ -528,8 +528,8 @@
     </div>
   </section>
 
-  <div class="menu-content" id="menuContent"></div>
-  <div class="no-results" id="noResults">No menu items found.</div>
+  <div class="promotions-content" id="promotionsContent"></div>
+  <div class="no-results" id="noResults">No promotions found.</div>
 
 </main>
 
@@ -576,7 +576,7 @@
     en:{
       chooseLanguage:"Choose Language",
       itemDetails:"Item Details",
-      noResults:"No Menu Items Found.",
+      noResults:"No Promotions Found.",
       custom:"Customize"
     },
     ar:{
@@ -600,7 +600,7 @@
   };
 
   // The following information applies to all six promotions and appears
-  // in each item's detail popup only (never on the menu cards).
+  // in each item's detail popup only (never on the promotions cards).
   const OFFER_DETAILS = {
     en: {
       validityLabel: "Validity", validity: "1st – 30th November 2026",
@@ -632,13 +632,13 @@
   /*
     IMAGE SYSTEM
     ------------
-    Keep the offer filenames in the MENU data below. Images can be uploaded
+    Keep the offer filenames in the PROMOTIONS data below. Images can be uploaded
     directly into either "assets" or "asset" beside this HTML file.
     The loader also checks common naming differences (offer 1 / offer1),
-    JPG/JPEG/PNG/WEBP and previous "menu" subfolders for compatibility.
+    JPG/JPEG/PNG/WEBP and previous "promotions" subfolders for compatibility.
   */
 
-  const MENU = [
+  const PROMOTIONS = [
   {
     "id": "offer-1",
     "image": "offer 1.jpg",
@@ -775,10 +775,10 @@
 
   const categoryOrder = ["alcoholic-promotion", "non-alcoholic-promotions"];
 
-  let currentLang = localStorage.getItem("kow-menu-lang") || "en";
+  let currentLang = localStorage.getItem("kow-promotions-lang") || "en";
   if(!["en","ar","ru","zh"].includes(currentLang)) currentLang = "en";
 
-  const menuContent = document.getElementById("menuContent");
+  const promotionsContent = document.getElementById("promotionsContent");
   const noResults = document.getElementById("noResults");
 
   function esc(v=""){
@@ -798,7 +798,7 @@
       : [filename.replace(/\.(jpe?g|png|webp)$/i, "")];
     const suppliedExt = (filename.match(/\.([^.]+)$/) || [,"jpg"])[1].toLowerCase();
     const exts = [...new Set([suppliedExt, "jpg", "jpeg", "png", "webp"])] ;
-    const dirs = ["assets", "asset", "assets/menu", "asset/menu"];
+    const dirs = ["assets", "asset", "assets/promotions", "asset/promotions"];
     const paths = [];
     for(const name of names){
       for(const ext of exts){
@@ -837,17 +837,17 @@
     return formatted;
   }
 
-  function renderMenu(){
+  function renderPromotions(){
     let totalVisible = 0;
 
-    menuContent.innerHTML = categoryOrder.map(cat=>{
-      const items = MENU.filter(item=>item.cat===cat);
+    promotionsContent.innerHTML = categoryOrder.map(cat=>{
+      const items = PROMOTIONS.filter(item=>item.cat===cat);
 
       if(!items.length) return "";
       totalVisible += items.length;
 
       return `
-        <section class="menu-section" id="section-${cat}" data-section-cat="${cat}">
+        <section class="promotions-section" id="section-${cat}" data-section-cat="${cat}">
           <h2 class="section-title">${esc(CAT[cat][currentLang])}</h2>
           <div class="product-grid">
             ${items.map(productCard).join("")}
@@ -858,11 +858,11 @@
 
     noResults.classList.toggle("show", totalVisible===0);
 
-    menuContent.querySelectorAll("img[data-image-file]").forEach(img=>{
+    promotionsContent.querySelectorAll("img[data-image-file]").forEach(img=>{
       loadAssetImage(img, img.dataset.imageFile);
     });
 
-    menuContent.querySelectorAll(".product-card").forEach(card=>{
+    promotionsContent.querySelectorAll(".product-card").forEach(card=>{
       card.addEventListener("click",()=>openProduct(card.dataset.id));
       card.addEventListener("keydown",e=>{
         if(e.key==="Enter" || e.key===" "){
@@ -901,7 +901,7 @@
   }
 
   function openProduct(id){
-    const item = MENU.find(x=>x.id===id);
+    const item = PROMOTIONS.find(x=>x.id===id);
     if(!item) return;
 
     const t = item[currentLang];
@@ -945,7 +945,7 @@
 
   function setLanguage(lang){
     currentLang = lang;
-    localStorage.setItem("kow-menu-lang",lang);
+    localStorage.setItem("kow-promotions-lang",lang);
 
     document.documentElement.lang = lang;
     document.documentElement.dir = lang==="ar" ? "rtl" : "ltr";
@@ -962,7 +962,7 @@
       btn.querySelector(".check").textContent = active ? "✓" : "";
     });
 
-    renderMenu();
+    renderPromotions();
     closeOverlay("languageOverlay");
   }
 
